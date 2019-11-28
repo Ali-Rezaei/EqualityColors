@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Storytel</string>
+    <string name="retry">Retry</string>
+    <string name="failed_loading_msg">Storytel is offline</string>
+</resources>
