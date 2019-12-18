@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.sample.android.storytel.BR
 import com.sample.android.storytel.R
 import com.sample.android.storytel.databinding.FragmentMainBinding
-import com.sample.android.storytel.domain.Post
+import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.setupActionBar
 import com.sample.android.storytel.viewmodels.MainViewModel
 import dagger.android.support.DaggerFragment
@@ -49,8 +49,9 @@ constructor() // Required empty public constructor
                 lifecycleOwner = viewLifecycleOwner
             }
 
-            viewModel.posts.observe(viewLifecycleOwner, Observer<List<Post>> { posts ->
-                viewModelAdapter.submitList(posts)
+            viewModel.liveData.observe(viewLifecycleOwner, Observer {
+                if (it is Resource.Success)
+                    viewModelAdapter.submitList(it.data)
             })
 
             viewModelAdapter =

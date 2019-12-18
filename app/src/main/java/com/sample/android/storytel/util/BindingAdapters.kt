@@ -6,22 +6,23 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.github.florent37.picassopalette.PicassoPalette
 import com.sample.android.storytel.R
+import com.sample.android.storytel.domain.Post
 import com.squareup.picasso.Picasso
 
 @BindingAdapter("showLoading")
-fun View.showLoading(status: Status?) {
-    visibility = if (status == Status.LOADING) View.VISIBLE else View.GONE
+fun View.showLoading(resource : Resource<List<Post>>) {
+    visibility = if (resource is Resource.Loading) View.VISIBLE else View.GONE
 }
 
 
 @BindingAdapter("showError")
-fun View.showError(status: Status?) {
-    visibility = if (status == Status.ERROR) View.VISIBLE else View.GONE
+fun View.showError(resource : Resource<List<Post>>) {
+    visibility = if (resource is Resource.Failure) View.VISIBLE else View.GONE
 }
 
 @BindingAdapter("showData")
-fun View.showData(status: Status?) {
-    visibility = if (status == Status.SUCCESS) View.VISIBLE else View.GONE
+fun View.showData(resource: Resource<List<Post>>) {
+    visibility = if (resource is Resource.Success) View.VISIBLE else View.GONE
 }
 
 /**

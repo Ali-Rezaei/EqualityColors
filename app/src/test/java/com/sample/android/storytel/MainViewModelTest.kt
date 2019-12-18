@@ -6,6 +6,7 @@ import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
 import com.sample.android.storytel.network.NetworkPost
 import com.sample.android.storytel.network.StorytelService
+import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.MainViewModel
 import io.reactivex.Observable
@@ -30,7 +31,6 @@ class MainViewModelTest {
     @Mock
     private lateinit var api: StorytelService
 
-
     @Test
     fun loadPosts() {
         val networkPhoto1 = NetworkPhoto(1, 1, "title", "url", "thumbnailUrl")
@@ -45,13 +45,15 @@ class MainViewModelTest {
 
         val viewModel = MainViewModel(schedulerProvider, api)
 
-        val observer = LoggingObserver<List<Post>>()
-        viewModel.posts.observeForever(observer)
+        val observer = LoggingObserver<Resource<List<Post>>>()
+        viewModel.liveData.observeForever(observer)
 
-        with(observer) {
-            assertThat(this.value, `is`(notNullValue()))
-            assertTrue(this.value!!.isNotEmpty())
-            assertThat(this.value?.size, `is`(1))
+        with(observer.value) {
+            if (this is Resource.Success) {
+                assertThat(this, `is`(notNullValue()))
+                assertTrue(data!!.isNotEmpty())
+                assertThat(data?.size, `is`(1))
+            }
         }
     }
 

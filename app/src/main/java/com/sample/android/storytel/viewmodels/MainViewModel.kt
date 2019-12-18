@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Post
-import com.sample.android.storytel.network.*
+import com.sample.android.storytel.network.NetworkPhoto
+import com.sample.android.storytel.network.PostAndImages
+import com.sample.android.storytel.network.StorytelService
+import com.sample.android.storytel.network.asDomaineModel
 import com.sample.android.storytel.util.EspressoIdlingResource
-import com.sample.android.storytel.util.Status
+import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,13 +26,9 @@ class MainViewModel(
     private val api: StorytelService
 ) : BaseViewModel() {
 
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>>
-        get() = _posts
-
-    private val _status = MutableLiveData<Status>()
-    val status: LiveData<Status>
-        get() = _status
+    private val _liveData = MutableLiveData<Resource<List<Post>>>()
+    val liveData: LiveData<Resource<List<Post>>>
+        get() = _liveData
 
     init {
         showPhotos()
@@ -37,7 +36,7 @@ class MainViewModel(
 
     fun showPhotos() {
         EspressoIdlingResource.increment() // App is busy until further notice
-        _status.postValue(Status.LOADING)
+        _liveData.postValue(Resource.Loading())
         compositeDisposable.add(api.getPhotos()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -47,17 +46,16 @@ class MainViewModel(
                 }
             }
             .subscribe({
-                _status.postValue(Status.SUCCESS)
                 showPosts(it)
             }) {
-                _status.postValue(Status.ERROR)
+                _liveData.postValue(Resource.Failure(it.localizedMessage))
                 Timber.e(it)
             })
     }
 
     private fun showPosts(networkPhotos: List<NetworkPhoto>) {
         EspressoIdlingResource.increment() // App is busy until further notice
-        _status.postValue(Status.LOADING)
+        _liveData.postValue(Resource.Loading())
         compositeDisposable.add(api.getPosts()
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
@@ -67,12 +65,12 @@ class MainViewModel(
                 }
             }
             .subscribe({ networkPosts ->
-                _status.postValue(Status.SUCCESS)
-                _posts.postValue(
-                    PostAndImages(networkPosts, networkPhotos).asDomaineModel()
+                _liveData.postValue(
+                    Resource.Success(PostAndImages(networkPosts, networkPhotos).asDomaineModel())
                 )
+
             }) {
-                _status.postValue(Status.ERROR)
+                _liveData.postValue(Resource.Failure(it.localizedMessage))
                 Timber.e(it)
             })
     }
