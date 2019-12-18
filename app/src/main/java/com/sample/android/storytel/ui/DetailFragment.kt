@@ -29,7 +29,7 @@ constructor() // Required empty public constructor
     @Inject
     lateinit var api: StorytelService
 
-    lateinit var factory: DetailViewModel.Factory
+    private lateinit var factory: DetailViewModel.Factory
 
     private val viewModel: DetailViewModel by lazy {
         ViewModelProviders.of(this, factory)
