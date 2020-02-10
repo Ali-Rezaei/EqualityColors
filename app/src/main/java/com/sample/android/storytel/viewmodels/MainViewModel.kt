@@ -7,11 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
 import com.sample.android.storytel.network.PostAndImages
-import com.sample.android.storytel.network.StorytelService
 import com.sample.android.storytel.network.asDomaineModel
-import com.sample.android.storytel.util.EspressoIdlingResource
+import com.sample.android.storytel.usecase.UseCase
 import com.sample.android.storytel.util.Resource
-import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,8 +20,7 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-    private val schedulerProvider: BaseSchedulerProvider,
-    private val api: StorytelService
+    private val useCase: UseCase
 ) : BaseViewModel() {
 
     private val _liveData = MutableLiveData<Resource<List<Post>>>()
@@ -35,16 +32,8 @@ class MainViewModel(
     }
 
     fun showPhotos() {
-        EspressoIdlingResource.increment() // App is busy until further notice
         _liveData.postValue(Resource.Loading())
-        compositeDisposable.add(api.getPhotos()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .doFinally {
-                if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
-                    EspressoIdlingResource.decrement() // Set app as idle.
-                }
-            }
+        compositeDisposable.add(useCase.getPhotos()
             .subscribe({
                 showPosts(it)
             }) {
@@ -54,16 +43,8 @@ class MainViewModel(
     }
 
     private fun showPosts(networkPhotos: List<NetworkPhoto>) {
-        EspressoIdlingResource.increment() // App is busy until further notice
         _liveData.postValue(Resource.Loading())
-        compositeDisposable.add(api.getPosts()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-            .doFinally {
-                if (!EspressoIdlingResource.countingIdlingResource.isIdleNow) {
-                    EspressoIdlingResource.decrement() // Set app as idle.
-                }
-            }
+        compositeDisposable.add(useCase.getPost()
             .subscribe({ networkPosts ->
                 _liveData.postValue(
                     Resource.Success(PostAndImages(networkPosts, networkPhotos).asDomaineModel())
@@ -79,13 +60,12 @@ class MainViewModel(
      * Factory for constructing MainViewModel with parameter
      */
     class Factory @Inject constructor(
-        private val schedulerProvider: BaseSchedulerProvider,
-        private val api: StorytelService
+        private val useCase: UseCase
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(schedulerProvider, api) as T
+                return MainViewModel(useCase) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }

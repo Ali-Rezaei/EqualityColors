@@ -13,8 +13,7 @@ import androidx.transition.TransitionInflater
 import com.sample.android.storytel.BR
 import com.sample.android.storytel.R
 import com.sample.android.storytel.databinding.FragmentDetailBinding
-import com.sample.android.storytel.network.StorytelService
-import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
+import com.sample.android.storytel.usecase.UseCase
 import com.sample.android.storytel.viewmodels.DetailViewModel
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -24,10 +23,7 @@ constructor() // Required empty public constructor
     : DaggerFragment() {
 
     @Inject
-    lateinit var schedulerProvider: BaseSchedulerProvider
-
-    @Inject
-    lateinit var api: StorytelService
+    lateinit var useCase: UseCase
 
     private lateinit var factory: DetailViewModel.Factory
 
@@ -44,7 +40,7 @@ constructor() // Required empty public constructor
         savedInstanceState: Bundle?
     ): View? {
         val args = DetailFragmentArgs.fromBundle(arguments!!)
-        factory = DetailViewModel.Factory(schedulerProvider, api, args.post)
+        factory = DetailViewModel.Factory(useCase, args.post)
         val binding = FragmentDetailBinding.inflate(inflater, container, false).apply {
             setVariable(BR.vm, viewModel)
             // Set the lifecycleOwner so DataBinding can observe LiveData

@@ -15,7 +15,8 @@ import dagger.android.support.AndroidSupportInjectionModule
 @Component(
     modules = [ActivityBindingModule::class,
         AndroidSupportInjectionModule::class,
-        Network::class]
+        Network::class,
+        BaseModule::class]
 )
 interface AppComponent : AndroidInjector<StorytelApplication> {
 

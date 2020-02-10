@@ -6,14 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Comment
 import com.sample.android.storytel.domain.Post
-import com.sample.android.storytel.network.StorytelService
-import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
+import com.sample.android.storytel.usecase.UseCase
 import timber.log.Timber
 
 class DetailViewModel(
-    private val schedulerProvider: BaseSchedulerProvider,
-    private val api : StorytelService,
-    private val post: Post
+    useCase: UseCase,
+    post: Post
 ) : BaseViewModel() {
 
     private val _comments = MutableLiveData<List<Comment>>()
@@ -21,13 +19,7 @@ class DetailViewModel(
         get() = _comments
 
     init {
-        showComments()
-    }
-
-    private fun showComments() {
-        compositeDisposable.add(api.getComments(post.id)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+        compositeDisposable.add(useCase.getComments(post.id)
             .subscribe({
                 _comments.postValue(it)
             }) {
@@ -39,14 +31,13 @@ class DetailViewModel(
      * Factory for constructing DetailViewModel with parameter
      */
     class Factory(
-        private val schedulerProvider: BaseSchedulerProvider,
-        private val api : StorytelService,
+        private val useCase: UseCase,
         private val post: Post
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return DetailViewModel(schedulerProvider, api, post) as T
+                return DetailViewModel(useCase, post) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }

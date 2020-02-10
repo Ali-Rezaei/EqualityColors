@@ -6,6 +6,7 @@ import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
 import com.sample.android.storytel.network.NetworkPost
 import com.sample.android.storytel.network.StorytelService
+import com.sample.android.storytel.usecase.UseCase
 import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.MainViewModel
@@ -43,7 +44,8 @@ class MainViewModelTest {
         // Make the sure that all schedulers are immediate.
         val schedulerProvider = ImmediateSchedulerProvider()
 
-        val viewModel = MainViewModel(schedulerProvider, api)
+        val useCase = UseCase(schedulerProvider, api)
+        val viewModel = MainViewModel(useCase)
 
         val observer = LoggingObserver<Resource<List<Post>>>()
         viewModel.liveData.observeForever(observer)
