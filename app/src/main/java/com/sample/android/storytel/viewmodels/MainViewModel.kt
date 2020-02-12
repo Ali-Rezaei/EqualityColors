@@ -8,7 +8,7 @@ import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
 import com.sample.android.storytel.network.PostAndImages
 import com.sample.android.storytel.network.asDomaineModel
-import com.sample.android.storytel.usecase.UseCase
+import com.sample.android.storytel.usecase.MainUseCase
 import com.sample.android.storytel.util.Resource
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +20,7 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-    private val useCase: UseCase
+    private val useCase: MainUseCase
 ) : BaseViewModel() {
 
     private val _liveData = MutableLiveData<Resource<List<Post>>>()
@@ -60,7 +60,7 @@ class MainViewModel(
      * Factory for constructing MainViewModel with parameter
      */
     class Factory @Inject constructor(
-        private val useCase: UseCase
+        private val useCase: MainUseCase
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {

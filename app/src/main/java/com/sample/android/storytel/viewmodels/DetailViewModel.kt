@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Comment
 import com.sample.android.storytel.domain.Post
-import com.sample.android.storytel.usecase.UseCase
+import com.sample.android.storytel.usecase.DetailUseCase
 import timber.log.Timber
 
 class DetailViewModel(
-    useCase: UseCase,
+    useCase: DetailUseCase,
     post: Post
 ) : BaseViewModel() {
 
@@ -31,7 +31,7 @@ class DetailViewModel(
      * Factory for constructing DetailViewModel with parameter
      */
     class Factory(
-        private val useCase: UseCase,
+        private val useCase: DetailUseCase,
         private val post: Post
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -13,7 +13,7 @@ import androidx.transition.TransitionInflater
 import com.sample.android.storytel.BR
 import com.sample.android.storytel.R
 import com.sample.android.storytel.databinding.FragmentDetailBinding
-import com.sample.android.storytel.usecase.UseCase
+import com.sample.android.storytel.usecase.DetailUseCase
 import com.sample.android.storytel.viewmodels.DetailViewModel
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -23,7 +23,7 @@ constructor() // Required empty public constructor
     : DaggerFragment() {
 
     @Inject
-    lateinit var useCase: UseCase
+    lateinit var useCase: DetailUseCase
 
     private lateinit var factory: DetailViewModel.Factory
 
