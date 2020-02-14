@@ -8,6 +8,7 @@ import com.sample.android.storytel.domain.Comment
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.usecase.DetailUseCase
 import timber.log.Timber
+import javax.inject.Inject
 
 class DetailViewModel(
     useCase: DetailUseCase,
@@ -30,9 +31,9 @@ class DetailViewModel(
     /**
      * Factory for constructing DetailViewModel with parameter
      */
-    class Factory(
+    class Factory @Inject constructor(
         private val useCase: DetailUseCase,
-        private val post: Post
+        val post: Post
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
