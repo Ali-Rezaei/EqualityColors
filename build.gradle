@@ -26,7 +26,7 @@ buildscript {
         version_rxjava = '2.1.9'
         version_rxandroid = '2.1.0'
         version_dagger = '2.24'
-        version_fragment = '1.2.0-rc01'
+        version_fragment = '1.2.1'
 
         //Testing
         version_junit_ext = '1.1.0'
