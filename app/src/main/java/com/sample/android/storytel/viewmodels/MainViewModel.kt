@@ -43,13 +43,11 @@ class MainViewModel(
     }
 
     private fun showPosts(networkPhotos: List<NetworkPhoto>) {
-        _liveData.postValue(Resource.Loading())
         compositeDisposable.add(useCase.getPost()
             .subscribe({ networkPosts ->
                 _liveData.postValue(
                     Resource.Success(PostAndImages(networkPosts, networkPhotos).asDomaineModel())
                 )
-
             }) {
                 _liveData.postValue(Resource.Failure(it.localizedMessage))
                 Timber.e(it)
