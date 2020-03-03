@@ -59,9 +59,11 @@ constructor() // Required empty public constructor
                     val extras = FragmentNavigatorExtras(
                         imageView to post.id.toString()
                     )
-                    findNavController().navigate(
-                        MainFragmentDirections.actionMainFragmentToDetailFragment(post), extras
-                    )
+                    val destination = MainFragmentDirections.actionMainFragmentToDetailFragment(post)
+                    with(findNavController()) {
+                        currentDestination?.getAction(destination.actionId)?.let { navigate(destination, extras) }
+                    }
+
                 })
 
             with(binding!!) {
