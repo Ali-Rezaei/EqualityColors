@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
+import com.sample.android.storytel.network.NetworkPost
 import com.sample.android.storytel.network.PostAndImages
 import com.sample.android.storytel.network.asDomaineModel
 import com.sample.android.storytel.usecase.MainUseCase
@@ -28,31 +29,30 @@ class MainViewModel(
         get() = _liveData
 
     init {
-        showPhotos()
+        showItems()
     }
 
-    fun showPhotos() {
+    fun showItems() {
         _liveData.postValue(Resource.Loading())
-        compositeDisposable.add(useCase.getPhotos()
+        val requestWrapper = RequestWrapper()
+        useCase.getPhotos().map { requestWrapper.networkPhotos = it }
+            .flatMap { useCase.getPost() }.map { requestWrapper.networkPosts = it }
             .subscribe({
-                showPosts(it)
+                _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPost ->
+                    requestWrapper.networkPhotos?.let { networkPhotos ->
+                        PostAndImages(networkPost, networkPhotos).asDomaineModel()
+                    }
+                }))
             }) {
                 _liveData.postValue(Resource.Failure(it.localizedMessage))
                 Timber.e(it)
-            })
+            }.also { compositeDisposable.add(it) }
     }
 
-    private fun showPosts(networkPhotos: List<NetworkPhoto>) {
-        compositeDisposable.add(useCase.getPost()
-            .subscribe({ networkPosts ->
-                _liveData.postValue(
-                    Resource.Success(PostAndImages(networkPosts, networkPhotos).asDomaineModel())
-                )
-            }) {
-                _liveData.postValue(Resource.Failure(it.localizedMessage))
-                Timber.e(it)
-            })
-    }
+    class RequestWrapper(
+        var networkPhotos: List<NetworkPhoto>? = null,
+        var networkPosts: List<NetworkPost>? = null
+    )
 
     /**
      * Factory for constructing MainViewModel with parameter

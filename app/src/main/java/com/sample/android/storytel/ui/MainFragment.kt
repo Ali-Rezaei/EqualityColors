@@ -79,7 +79,7 @@ constructor() // Required empty public constructor
                 }
 
                 retryBtn.setOnClickListener {
-                    viewModel.showPhotos()
+                    viewModel.showItems()
                 }
 
                 (activity as AppCompatActivity).setupActionBar(toolbar) {
