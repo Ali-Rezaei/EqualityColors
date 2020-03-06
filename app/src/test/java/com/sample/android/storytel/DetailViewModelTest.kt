@@ -5,7 +5,6 @@ import com.sample.android.storytel.domain.Comment
 import com.sample.android.storytel.domain.Photo
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.StorytelService
-import com.sample.android.storytel.usecase.DetailUseCase
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.DetailViewModel
@@ -30,7 +29,6 @@ class DetailViewModelTest {
     private lateinit var api: StorytelService
 
     private lateinit var schedulerProvider: BaseSchedulerProvider
-    private lateinit var useCase: DetailUseCase
 
     private lateinit var post: Post
 
@@ -40,7 +38,6 @@ class DetailViewModelTest {
 
         // Make the sure that all schedulers are immediate.
         schedulerProvider = ImmediateSchedulerProvider()
-        useCase = DetailUseCase(schedulerProvider, api)
 
         post = Post(
             1, 1, "title", "body",
@@ -54,7 +51,7 @@ class DetailViewModelTest {
         val observableResponse = Observable.just(listOf(comment))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
-        val viewModel = DetailViewModel(useCase, post)
+        val viewModel = DetailViewModel(api, schedulerProvider, post)
 
         with(viewModel) {
 
@@ -68,7 +65,7 @@ class DetailViewModelTest {
         val observableResponse = Observable.error<List<Comment>>(Exception())
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
-        val viewModel = DetailViewModel(useCase, post)
+        val viewModel = DetailViewModel(api, schedulerProvider, post)
 
         with(viewModel) {
             assertTrue(comments.value == null)
