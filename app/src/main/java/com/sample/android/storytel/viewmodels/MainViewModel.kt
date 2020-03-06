@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.NetworkPhoto
 import com.sample.android.storytel.network.NetworkPost
-import com.sample.android.storytel.network.PostAndImages
+import com.sample.android.storytel.network.PostsAndImages
 import com.sample.android.storytel.network.asDomaineModel
 import com.sample.android.storytel.usecase.MainUseCase
 import com.sample.android.storytel.util.Resource
@@ -38,9 +38,9 @@ class MainViewModel(
         useCase.getPhotos().map { requestWrapper.networkPhotos = it }
             .flatMap { useCase.getPost() }.map { requestWrapper.networkPosts = it }
             .subscribe({
-                _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPost ->
+                _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPosts ->
                     requestWrapper.networkPhotos?.let { networkPhotos ->
-                        PostAndImages(networkPost, networkPhotos).asDomaineModel()
+                        PostsAndImages(networkPosts, networkPhotos).asDomaineModel()
                     }
                 }))
             }) {

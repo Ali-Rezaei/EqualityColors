@@ -4,7 +4,7 @@ import com.sample.android.storytel.domain.Photo
 import com.sample.android.storytel.domain.Post
 import java.util.Random
 
-class PostAndImages(
+class PostsAndImages(
     val networkPosts: List<NetworkPost>,
     val networkPhotos: List<NetworkPhoto>
 )
@@ -24,7 +24,7 @@ class NetworkPhoto(
     val thumbnailUrl: String
 )
 
-fun PostAndImages.asDomaineModel(): List<Post> {
+fun PostsAndImages.asDomaineModel(): List<Post> {
     val posts = ArrayList<Post>()
     for (i in networkPosts.indices) {
         val networkPost = networkPosts[i]

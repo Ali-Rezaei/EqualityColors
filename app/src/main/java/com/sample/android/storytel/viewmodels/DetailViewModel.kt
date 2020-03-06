@@ -20,12 +20,12 @@ class DetailViewModel(
         get() = _comments
 
     init {
-        compositeDisposable.add(useCase.getComments(post.id)
+        useCase.getComments(post.id)
             .subscribe({
                 _comments.postValue(it)
             }) {
                 Timber.e(it)
-            })
+            }.also { compositeDisposable.add(it) }
     }
 
     /**
