@@ -38,8 +38,11 @@ constructor() // Required empty public constructor
         savedInstanceState: Bundle?
     ): View? {
 
-        if (binding == null) {
-
+        binding?.let {
+            // execute this block if not null
+            return it.root
+        } ?: run {
+            // execute this block if null
             val viewModel = ViewModelProviders.of(this, factory)
                 .get(MainViewModel::class.java)
 
@@ -71,11 +74,10 @@ constructor() // Required empty public constructor
                     setHasFixedSize(true)
                     adapter = viewModelAdapter
                     postponeEnterTransition()
-                    viewTreeObserver
-                        .addOnPreDrawListener {
-                            startPostponedEnterTransition()
-                            true
-                        }
+                    viewTreeObserver.addOnPreDrawListener {
+                        startPostponedEnterTransition()
+                        true
+                    }
                 }
 
                 retryBtn.setOnClickListener {
@@ -86,7 +88,7 @@ constructor() // Required empty public constructor
                     setTitle(R.string.app_name)
                 }
             }
+            return binding?.root
         }
-        return binding?.root
     }
 }
