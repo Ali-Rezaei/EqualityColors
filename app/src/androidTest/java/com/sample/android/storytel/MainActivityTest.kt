@@ -54,6 +54,7 @@ class MainActivityTest {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
         onView(withId(R.id.toolbar)).check(matches(isDisplayed()))
+        activityScenario.close()
     }
 
     @Test
@@ -61,5 +62,6 @@ class MainActivityTest {
         val activityScenario = ActivityScenario.launch(MainActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
         onView(withId(R.id.recycler_view)).check(matches(isDisplayed()))
+        activityScenario.close()
     }
 }
