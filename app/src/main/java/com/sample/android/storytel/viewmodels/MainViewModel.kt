@@ -18,8 +18,8 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-        private val api: StorytelService,
-        schedulerProvider: BaseSchedulerProvider
+    private val api: StorytelService,
+    schedulerProvider: BaseSchedulerProvider
 ) : BaseViewModel(schedulerProvider) {
 
     private val _liveData = MutableLiveData<Resource<List<Post>>>()
@@ -33,31 +33,32 @@ class MainViewModel(
     fun showItems() {
         _liveData.value = Resource.Loading()
         val requestWrapper = RequestWrapper()
-        composeObservable { api.getPhotos() }.map { requestWrapper.networkPhotos = it }
-                .flatMap { composeObservable { api.getPosts() } }.map { requestWrapper.networkPosts = it }
-                .subscribe({
-                    _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPosts ->
-                        requestWrapper.networkPhotos?.let { networkPhotos ->
-                            PostsAndImages(networkPosts, networkPhotos).asDomaineModel()
-                        }
-                    }))
-                }) {
-                    _liveData.postValue(Resource.Failure(it.localizedMessage))
-                    Timber.e(it)
-                }.also { compositeDisposable.add(it) }
+        composeObservable {
+            api.getPhotos().map { requestWrapper.networkPhotos = it }
+                .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
+        }.subscribe({
+            _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPosts ->
+                requestWrapper.networkPhotos?.let { networkPhotos ->
+                    PostsAndImages(networkPosts, networkPhotos).asDomaineModel()
+                }
+            }))
+        }) {
+            _liveData.postValue(Resource.Failure(it.localizedMessage))
+            Timber.e(it)
+        }.also { compositeDisposable.add(it) }
     }
 
     class RequestWrapper(
-            var networkPhotos: List<NetworkPhoto>? = null,
-            var networkPosts: List<NetworkPost>? = null
+        var networkPhotos: List<NetworkPhoto>? = null,
+        var networkPosts: List<NetworkPost>? = null
     )
 
     /**
      * Factory for constructing MainViewModel with parameter
      */
     class Factory @Inject constructor(
-            private val api: StorytelService,
-            private val schedulerProvider: BaseSchedulerProvider
+        private val api: StorytelService,
+        private val schedulerProvider: BaseSchedulerProvider
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
