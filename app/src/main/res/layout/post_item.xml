@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_small"
         android:layout_marginBottom="@dimen/spacing_normal"
+        android:theme="@style/Theme.MaterialComponents.Light"
         app:cardCornerRadius="0dp"
         app:cardElevation="5dp">
 

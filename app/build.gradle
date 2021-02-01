@@ -30,6 +30,15 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     dataBinding {
         enabled = true
     }
@@ -100,5 +109,5 @@ dependencies {
     androidTestImplementation  "androidx.test:rules:$version_rules"
 
     // AndroidX Test - JVM testing
-    testImplementation "androidx.fragment:fragment-testing:$version_fragment"
+    implementation "androidx.fragment:fragment-testing:$version_fragment"
 }
