@@ -78,7 +78,6 @@ dependencies {
     // Network
     implementation "com.squareup.okhttp3:logging-interceptor:$version_okhttp"
     implementation "com.squareup.picasso:picasso:$version_picasso"
-    implementation "com.github.florent37:picassopalette:$version_picasso_palette"
 
     // Moshi for parsing the JSON format
     implementation "com.squareup.moshi:moshi:$version_moshi"

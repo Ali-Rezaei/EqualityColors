@@ -104,6 +104,7 @@
                     android:layout_height="48dp"
                     android:layout_gravity="bottom"
                     android:alpha="0.8"
+                    android:background="@color/black_translucent_60"
                     android:gravity="center" />
 
                 <TextView
@@ -115,6 +116,7 @@
                     android:paddingLeft="@dimen/spacing_small"
                     android:paddingRight="@dimen/spacing_small"
                     android:text="@{post.photo.title}"
+                    android:textColor="@android:color/white"
                     android:textSize="18sp" />
 
             </FrameLayout>

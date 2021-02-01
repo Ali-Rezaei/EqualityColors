@@ -17,7 +17,6 @@ buildscript {
         version_material = '1.2.1'
         version_palette = '1.0.0'
         version_picasso = '2.5.2'
-        version_picasso_palette = '2.0.0'
         version_retrofit = '2.9.0'
         version_okhttp = '3.12.0'
         version_moshi = '1.8.0'

@@ -1,15 +1,14 @@
 package com.sample.android.storytel.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.*
-import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
-import timber.log.Timber
+import com.sample.android.storytel.viewmodels.MainViewModel.RequestWrapper
+import io.reactivex.Observable
 import javax.inject.Inject
+
 
 /**
  * MainViewModel designed to store and manage UI-related data in a lifecycle conscious way. This
@@ -18,47 +17,29 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-    private val api: StorytelService,
-    schedulerProvider: BaseSchedulerProvider
-) : BaseViewModel(schedulerProvider) {
+        api: StorytelService,
+        schedulerProvider: BaseSchedulerProvider,
+) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
+        getRequestWrapperAsObservable(api.getPhotos(), api.getPosts())) {
 
-    private val _liveData = MutableLiveData<Resource<List<Post>>>()
-    val liveData: LiveData<Resource<List<Post>>>
-        get() = _liveData
-
-    init {
-        showItems()
-    }
-
-    fun showItems() {
-        _liveData.value = Resource.Loading()
-        val requestWrapper = RequestWrapper()
-        composeObservable {
-            api.getPhotos().map { requestWrapper.networkPhotos = it }
-                .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
-        }.subscribe({
-            _liveData.postValue(Resource.Success(requestWrapper.networkPosts?.let { networkPosts ->
-                requestWrapper.networkPhotos?.let { networkPhotos ->
+    override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
+            wrapper?.networkPosts?.let { networkPosts ->
+                wrapper.networkPhotos?.let { networkPhotos ->
                     PostsAndImages(networkPosts, networkPhotos).asDomaineModel()
                 }
-            }))
-        }) {
-            _liveData.postValue(Resource.Failure(it.localizedMessage))
-            Timber.e(it)
-        }.also { compositeDisposable.add(it) }
-    }
+            }
 
     class RequestWrapper(
-        var networkPhotos: List<NetworkPhoto>? = null,
-        var networkPosts: List<NetworkPost>? = null
+            var networkPhotos: List<NetworkPhoto>? = null,
+            var networkPosts: List<NetworkPost>? = null,
     )
 
     /**
      * Factory for constructing MainViewModel with parameter
      */
     class Factory @Inject constructor(
-        private val api: StorytelService,
-        private val schedulerProvider: BaseSchedulerProvider
+            private val api: StorytelService,
+            private val schedulerProvider: BaseSchedulerProvider,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
@@ -68,4 +49,14 @@ class MainViewModel(
             throw IllegalArgumentException("Unable to construct viewmodel")
         }
     }
+}
+
+fun getRequestWrapperAsObservable(
+        networkPhotosObservable: Observable<List<NetworkPhoto>>,
+        networkPostsObservable: Observable<List<NetworkPost>>,
+): Pair<Observable<Unit>, RequestWrapper> {
+    val requestWrapper = RequestWrapper()
+    val requestObservable = networkPhotosObservable.map { requestWrapper.networkPhotos = it }
+            .flatMap { networkPostsObservable.map { requestWrapper.networkPosts = it } }
+    return Pair(requestObservable, requestWrapper)
 }

@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.sample.android.storytel.BR
@@ -43,8 +42,7 @@ constructor() // Required empty public constructor
             return it.root
         } ?: run {
             // execute this block if null
-            val viewModel = ViewModelProviders.of(this, factory)
-                .get(MainViewModel::class.java)
+            val viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
             binding = FragmentMainBinding.inflate(inflater, container, false).apply {
                 setVariable(BR.vm, viewModel)
@@ -52,7 +50,7 @@ constructor() // Required empty public constructor
                 lifecycleOwner = viewLifecycleOwner
             }
 
-            viewModel.liveData.observe(viewLifecycleOwner, Observer {
+            viewModel.liveData.observe(viewLifecycleOwner, {
                 if (it is Resource.Success)
                     viewModelAdapter.submitList(it.data)
             })
@@ -78,10 +76,6 @@ constructor() // Required empty public constructor
                         startPostponedEnterTransition()
                         true
                     }
-                }
-
-                retryBtn.setOnClickListener {
-                    viewModel.showItems()
                 }
 
                 (activity as AppCompatActivity).setupActionBar(toolbar) {
