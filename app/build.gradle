@@ -109,5 +109,5 @@ dependencies {
     androidTestImplementation  "androidx.test:rules:$version_rules"
 
     // AndroidX Test - JVM testing
-    implementation "androidx.fragment:fragment-testing:$version_fragment"
+    debugImplementation "androidx.fragment:fragment-testing:$version_fragment"
 }
