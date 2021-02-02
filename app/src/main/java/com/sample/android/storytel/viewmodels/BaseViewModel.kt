@@ -28,7 +28,7 @@ abstract class BaseViewModel<T, R, K>(
     }
 
     fun sendRequest() {
-        _liveData.postValue(Resource.Loading())
+        _liveData.value = Resource.Loading()
         composeObservable { requestObservable.first }.subscribe({
             _liveData.postValue(Resource.Success(getSuccessResult(it, requestObservable.second)))
         }) {

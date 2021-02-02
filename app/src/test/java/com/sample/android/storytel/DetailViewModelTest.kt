@@ -5,6 +5,7 @@ import com.sample.android.storytel.domain.Comment
 import com.sample.android.storytel.domain.Photo
 import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.StorytelService
+import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.DetailViewModel
@@ -40,8 +41,8 @@ class DetailViewModelTest {
         schedulerProvider = ImmediateSchedulerProvider()
 
         post = Post(
-            1, 1, "title", "body",
-            Photo(1, 1, "title", "url", "thumbnailUrl")
+                1, 1, "title", "body",
+                Photo(1, 1, "title", "url", "thumbnailUrl")
         )
     }
 
@@ -54,9 +55,11 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(api, schedulerProvider, post)
 
         with(viewModel) {
-
-            assertFalse(comments.value!!.isEmpty())
-            assertTrue(comments.value?.size == 1)
+            if (liveData.value is Resource.Success) {
+                val data = (liveData.value as Resource.Success<List<Comment>>).data
+                assertFalse(data.isNullOrEmpty())
+                assertTrue(data?.size == 1)
+            }
         }
     }
 
@@ -68,7 +71,10 @@ class DetailViewModelTest {
         val viewModel = DetailViewModel(api, schedulerProvider, post)
 
         with(viewModel) {
-            assertTrue(comments.value == null)
+            if (liveData.value is Resource.Failure) {
+                val resource = liveData.value as Resource.Failure<List<Comment>>
+                resource.cause?.let { assertTrue(it.isNotEmpty()) }
+            }
         }
     }
 }
