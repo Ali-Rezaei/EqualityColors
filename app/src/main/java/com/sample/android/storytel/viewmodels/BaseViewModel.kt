@@ -21,7 +21,7 @@ abstract class BaseViewModel<T, R, K>(
     val liveData: LiveData<Resource<T>>
         get() = _liveData
 
-    protected abstract fun getSuccessResult(it: R, wrapper : K?): T?
+    protected abstract fun getSuccessResult(it: R, wrapper: K?): T?
 
     init {
         sendRequest()
