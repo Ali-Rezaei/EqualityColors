@@ -65,7 +65,8 @@ class DetailViewModelTest {
 
     @Test
     fun errorLoadingComments() {
-        val observableResponse = Observable.error<List<Comment>>(Exception())
+        val errorMessage = "Error"
+        val observableResponse = Observable.error<List<Comment>>(Exception(errorMessage))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
         val viewModel = DetailViewModel(api, schedulerProvider, post)
@@ -73,7 +74,8 @@ class DetailViewModelTest {
         with(viewModel) {
             if (liveData.value is Resource.Failure) {
                 val resource = liveData.value as Resource.Failure<List<Comment>>
-                resource.cause?.let { assertTrue(it.isNotEmpty()) }
+                assertFalse(resource.cause.isNullOrEmpty())
+                assertTrue(resource.cause == errorMessage)
             }
         }
     }
