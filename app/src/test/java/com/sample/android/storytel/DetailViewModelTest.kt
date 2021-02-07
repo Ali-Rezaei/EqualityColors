@@ -54,11 +54,10 @@ class DetailViewModelTest {
 
         val viewModel = DetailViewModel(api, schedulerProvider, post)
 
-        with(viewModel) {
-            if (liveData.value is Resource.Success) {
-                val data = (liveData.value as Resource.Success<List<Comment>>).data
-                assertFalse(data.isNullOrEmpty())
-                assertTrue(data?.size == 1)
+        viewModel.liveData.value.let {
+            if (it is Resource.Success) {
+                assertFalse(it.data.isNullOrEmpty())
+                assertTrue(it.data?.size == 1)
             }
         }
     }
@@ -71,11 +70,10 @@ class DetailViewModelTest {
 
         val viewModel = DetailViewModel(api, schedulerProvider, post)
 
-        with(viewModel) {
-            if (liveData.value is Resource.Failure) {
-                val resource = liveData.value as Resource.Failure<List<Comment>>
-                assertFalse(resource.cause.isNullOrEmpty())
-                assertTrue(resource.cause == errorMessage)
+        viewModel.liveData.value.let {
+            if (it is Resource.Failure) {
+                assertFalse(it.cause.isNullOrEmpty())
+                assertTrue(it.cause == errorMessage)
             }
         }
     }
