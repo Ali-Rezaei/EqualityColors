@@ -9,7 +9,7 @@ import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.DetailViewModel
-import io.reactivex.Observable
+import io.reactivex.Single
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -49,7 +49,7 @@ class DetailViewModelTest {
     @Test
     fun loadComments() {
         val comment = Comment(1, 1, "name", "email", "body")
-        val observableResponse = Observable.just(listOf(comment))
+        val observableResponse = Single.just(listOf(comment))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
         val viewModel = DetailViewModel(api, schedulerProvider, post)
@@ -65,7 +65,7 @@ class DetailViewModelTest {
     @Test
     fun errorLoadingComments() {
         val errorMessage = "Error"
-        val observableResponse = Observable.error<List<Comment>>(Exception(errorMessage))
+        val observableResponse = Single.error<List<Comment>>(Exception(errorMessage))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
         val viewModel = DetailViewModel(api, schedulerProvider, post)

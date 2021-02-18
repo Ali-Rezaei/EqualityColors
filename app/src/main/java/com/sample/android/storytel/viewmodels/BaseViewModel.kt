@@ -6,13 +6,13 @@ import androidx.lifecycle.ViewModel
 import com.sample.android.storytel.util.EspressoIdlingResource
 import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
-import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 abstract class BaseViewModel<T, R, K>(
         private val schedulerProvider: BaseSchedulerProvider,
-        private val requestObservable: Pair<Observable<R>, K?>
+        private val requestObservable: Pair<Single<R>, K?>
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -29,7 +29,7 @@ abstract class BaseViewModel<T, R, K>(
 
     fun sendRequest() {
         _liveData.value = Resource.Loading()
-        composeObservable { requestObservable.first }.subscribe({
+        composeSingle { requestObservable.first }.subscribe({
             _liveData.postValue(Resource.Success(getSuccessResult(it, requestObservable.second)))
         }) {
             _liveData.postValue(Resource.Failure(it.localizedMessage))
@@ -37,7 +37,7 @@ abstract class BaseViewModel<T, R, K>(
         }.also { compositeDisposable.add(it) }
     }
 
-    private inline fun <T> composeObservable(task: () -> Observable<T>): Observable<T> = task()
+    private inline fun <T> composeSingle(task: () -> Single<T>): Single<T> = task()
             .doOnSubscribe { EspressoIdlingResource.increment() } // App is busy until further notice
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())

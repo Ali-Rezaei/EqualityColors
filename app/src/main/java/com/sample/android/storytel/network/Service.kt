@@ -6,7 +6,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import io.reactivex.Observable
+import io.reactivex.Single
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -24,13 +24,13 @@ import javax.inject.Singleton
 interface StorytelService {
 
     @GET("posts")
-    fun getPosts(): Observable<List<NetworkPost>>
+    fun getPosts(): Single<List<NetworkPost>>
 
     @GET("photos")
-    fun getPhotos(): Observable<List<NetworkPhoto>>
+    fun getPhotos(): Single<List<NetworkPhoto>>
 
     @GET("posts/{id}/comments")
-    fun getComments(@Path("id") id: Int) : Observable<List<Comment>>
+    fun getComments(@Path("id") id: Int) : Single<List<Comment>>
 }
 
 /**
@@ -42,9 +42,9 @@ private val moshi = Moshi.Builder()
     .build()
 
 private fun getLoggerInterceptor(): Interceptor {
-    val logger = HttpLoggingInterceptor(HttpLoggingInterceptor.Logger {
+    val logger = HttpLoggingInterceptor {
         Timber.d(it)
-    })
+    }
     logger.level = HttpLoggingInterceptor.Level.BASIC
     return logger
 }

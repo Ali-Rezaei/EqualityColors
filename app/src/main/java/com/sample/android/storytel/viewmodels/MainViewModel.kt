@@ -6,7 +6,7 @@ import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.*
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import com.sample.android.storytel.viewmodels.MainViewModel.RequestWrapper
-import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 
@@ -52,9 +52,9 @@ class MainViewModel(
 }
 
 fun getPairRequestObservable(
-        networkPhotosObservable: Observable<List<NetworkPhoto>>,
-        networkPostsObservable: Observable<List<NetworkPost>>,
-): Pair<Observable<Unit>, RequestWrapper> {
+        networkPhotosObservable: Single<List<NetworkPhoto>>,
+        networkPostsObservable: Single<List<NetworkPost>>,
+): Pair<Single<Unit>, RequestWrapper> {
     val requestWrapper = RequestWrapper()
     val requestObservable = networkPhotosObservable.map { requestWrapper.networkPhotos = it }
             .flatMap { networkPostsObservable.map { requestWrapper.networkPosts = it } }

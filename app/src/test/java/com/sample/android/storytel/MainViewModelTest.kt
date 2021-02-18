@@ -9,7 +9,7 @@ import com.sample.android.storytel.network.StorytelService
 import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.util.schedulars.ImmediateSchedulerProvider
 import com.sample.android.storytel.viewmodels.MainViewModel
-import io.reactivex.Observable
+import io.reactivex.Single
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.Assert.assertThat
@@ -35,10 +35,10 @@ class MainViewModelTest {
     fun loadPosts() {
         val networkPhoto1 = NetworkPhoto(1, 1, "title", "url", "thumbnailUrl")
         val networkPhoto2 = NetworkPhoto(1, 2, "title", "url", "thumbnailUrl")
-        `when`(api.getPhotos()).thenReturn(Observable.just(listOf(networkPhoto1, networkPhoto2)))
+        `when`(api.getPhotos()).thenReturn(Single.just(listOf(networkPhoto1, networkPhoto2)))
 
         val networkPost = NetworkPost(1, 1, "title", "body")
-        `when`(api.getPosts()).thenReturn(Observable.just(listOf(networkPost)))
+        `when`(api.getPosts()).thenReturn(Single.just(listOf(networkPost)))
 
         // Make the sure that all schedulers are immediate.
         val schedulerProvider = ImmediateSchedulerProvider()
