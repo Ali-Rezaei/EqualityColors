@@ -12,7 +12,7 @@ import timber.log.Timber
 
 abstract class BaseViewModel<T, R, K>(
         private val schedulerProvider: BaseSchedulerProvider,
-        private val requestObservable: Pair<Single<R>, K?>
+        private val requestSingle: Pair<Single<R>, K?>
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -29,8 +29,8 @@ abstract class BaseViewModel<T, R, K>(
 
     fun sendRequest() {
         _liveData.value = Resource.Loading()
-        composeSingle { requestObservable.first }.subscribe({
-            _liveData.postValue(Resource.Success(getSuccessResult(it, requestObservable.second)))
+        composeSingle { requestSingle.first }.subscribe({
+            _liveData.postValue(Resource.Success(getSuccessResult(it, requestSingle.second)))
         }) {
             _liveData.postValue(Resource.Failure(it.localizedMessage))
             Timber.e(it)

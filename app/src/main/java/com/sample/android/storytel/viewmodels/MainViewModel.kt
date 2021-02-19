@@ -20,7 +20,7 @@ class MainViewModel(
         api: StorytelService,
         schedulerProvider: BaseSchedulerProvider,
 ) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
-        getPairRequestObservable(api.getPhotos(), api.getPosts())) {
+        getPairRequestSingle(api.getPhotos(), api.getPosts())) {
 
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
             wrapper?.networkPosts?.let { networkPosts ->
@@ -51,12 +51,12 @@ class MainViewModel(
     }
 }
 
-fun getPairRequestObservable(
-        networkPhotosObservable: Single<List<NetworkPhoto>>,
-        networkPostsObservable: Single<List<NetworkPost>>,
+fun getPairRequestSingle(
+    networkPhotosSingle: Single<List<NetworkPhoto>>,
+    networkPostsSingle: Single<List<NetworkPost>>,
 ): Pair<Single<Unit>, RequestWrapper> {
     val requestWrapper = RequestWrapper()
-    val requestObservable = networkPhotosObservable.map { requestWrapper.networkPhotos = it }
-            .flatMap { networkPostsObservable.map { requestWrapper.networkPosts = it } }
+    val requestObservable = networkPhotosSingle.map { requestWrapper.networkPhotos = it }
+            .flatMap { networkPostsSingle.map { requestWrapper.networkPosts = it } }
     return Pair(requestObservable, requestWrapper)
 }
