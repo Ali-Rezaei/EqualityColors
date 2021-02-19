@@ -56,7 +56,7 @@ fun getPairRequestSingle(
     networkPostsSingle: Single<List<NetworkPost>>,
 ): Pair<Single<Unit>, RequestWrapper> {
     val requestWrapper = RequestWrapper()
-    val requestObservable = networkPhotosSingle.map { requestWrapper.networkPhotos = it }
+    val requestSingle = networkPhotosSingle.map { requestWrapper.networkPhotos = it }
             .flatMap { networkPostsSingle.map { requestWrapper.networkPosts = it } }
-    return Pair(requestObservable, requestWrapper)
+    return Pair(requestSingle, requestWrapper)
 }
