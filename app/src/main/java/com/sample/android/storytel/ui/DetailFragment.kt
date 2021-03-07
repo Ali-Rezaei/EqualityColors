@@ -13,6 +13,7 @@ import androidx.transition.TransitionInflater
 import com.sample.android.storytel.BR
 import com.sample.android.storytel.R
 import com.sample.android.storytel.databinding.FragmentDetailBinding
+import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.util.Resource
 import com.sample.android.storytel.viewmodels.DetailViewModel
 import dagger.android.support.DaggerFragment
@@ -25,23 +26,27 @@ constructor() // Required empty public constructor
     @Inject
     lateinit var factory: DetailViewModel.Factory
 
+    @Inject
+    lateinit var post: Post
+
     private val viewModel: DetailViewModel by lazy {
         ViewModelProvider(this, factory).get(DetailViewModel::class.java)
     }
 
     private val handler = Handler(Looper.getMainLooper())
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
         val binding = FragmentDetailBinding.inflate(inflater, container, false).apply {
             setVariable(BR.vm, viewModel)
             // Set the lifecycleOwner so DataBinding can observe LiveData
             lifecycleOwner = viewLifecycleOwner
-            post = arguments?.let { DetailFragmentArgs.fromBundle(it).post }
+            post = this@DetailFragment.post
         }
 
         sharedElementEnterTransition =
-            TransitionInflater.from(context).inflateTransition(R.transition.move)
+                TransitionInflater.from(context).inflateTransition(R.transition.move)
 
         with(binding) {
             toolbar.apply {
