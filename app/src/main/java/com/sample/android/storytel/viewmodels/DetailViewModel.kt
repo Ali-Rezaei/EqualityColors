@@ -12,10 +12,8 @@ class DetailViewModel(
         api: StorytelService,
         schedulerProvider: BaseSchedulerProvider,
         post: Post,
-) : BaseViewModel<List<Comment>, List<Comment>, Nothing>
-(schedulerProvider, Pair(api.getComments(post.id), null)) {
-
-    override fun getSuccessResult(it: List<Comment>, wrapper: Nothing?): List<Comment> = it
+) : BasePostViewModel<List<Comment>, List<Comment>>
+(schedulerProvider, api.getComments(post.id)) {
 
     /**
      * Factory for constructing DetailViewModel with parameter
