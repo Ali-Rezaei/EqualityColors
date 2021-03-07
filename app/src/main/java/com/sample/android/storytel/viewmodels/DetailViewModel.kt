@@ -23,7 +23,7 @@ class DetailViewModel(
     class Factory @Inject constructor(
             private val api: StorytelService,
             private val schedulerProvider: BaseSchedulerProvider,
-            val post: Post,
+            private val post: Post,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
