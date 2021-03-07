@@ -37,7 +37,7 @@ constructor() // Required empty public constructor
             setVariable(BR.vm, viewModel)
             // Set the lifecycleOwner so DataBinding can observe LiveData
             lifecycleOwner = viewLifecycleOwner
-            post = factory.post
+            post = arguments?.let { DetailFragmentArgs.fromBundle(it).post }
         }
 
         sharedElementEnterTransition =
