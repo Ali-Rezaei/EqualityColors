@@ -9,19 +9,19 @@ import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import javax.inject.Inject
 
 class DetailViewModel(
-        api: StorytelService,
-        schedulerProvider: BaseSchedulerProvider,
-        post: Post,
-) : BasePostViewModel<List<Comment>, List<Comment>>
-(schedulerProvider, api.getComments(post.id)) {
+    api: StorytelService,
+    schedulerProvider: BaseSchedulerProvider,
+    post: Post,
+) : BaseDetailViewModel<List<Comment>>
+    (schedulerProvider, api.getComments(post.id)) {
 
     /**
      * Factory for constructing DetailViewModel with parameter
      */
     class Factory @Inject constructor(
-            private val api: StorytelService,
-            private val schedulerProvider: BaseSchedulerProvider,
-            private val post: Post,
+        private val api: StorytelService,
+        private val schedulerProvider: BaseSchedulerProvider,
+        private val post: Post,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
