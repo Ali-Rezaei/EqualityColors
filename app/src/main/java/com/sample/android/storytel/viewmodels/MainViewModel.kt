@@ -51,7 +51,7 @@ class MainViewModel(
     }
 }
 
-fun getPairRequestSingle(
+private fun getPairRequestSingle(
     networkPhotosSingle: Single<List<NetworkPhoto>>,
     networkPostsSingle: Single<List<NetworkPost>>,
 ): Pair<Single<Unit>, RequestWrapper> {
