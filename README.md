@@ -1,4 +1,4 @@
-# EqualityColors
+# LibertyColors
 A sample to showcase Kotlin, MVVM, Navigation, Dagger, RxJava, Retrofit, DataBinding, Espresso and Unit test.
 
 ## Features
