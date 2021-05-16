@@ -29,7 +29,7 @@ abstract class DetailModule {
         internal fun providePost(activity: MainActivity): Post {
             val navHostFragment = activity.supportFragmentManager.findFragmentById(R.id.my_nav_host_fragment)
             val fragment = navHostFragment?.childFragmentManager?.fragments?.get(0);
-            return DetailFragmentArgs.fromBundle(fragment?.arguments!!).post
+            return DetailFragmentArgs.fromBundle(fragment!!.requireArguments()).post
         }
     }
 }

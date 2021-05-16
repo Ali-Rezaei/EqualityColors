@@ -11,8 +11,8 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 abstract class BaseViewModel<T, R, K>(
-        private val schedulerProvider: BaseSchedulerProvider,
-        private val requestSingle: Pair<Single<R>, K?>
+    private val schedulerProvider: BaseSchedulerProvider,
+    private val requestSingle: Pair<Single<R>, K?>
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()

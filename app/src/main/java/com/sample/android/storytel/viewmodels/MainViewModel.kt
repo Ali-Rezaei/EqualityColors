@@ -6,7 +6,6 @@ import com.sample.android.storytel.domain.Post
 import com.sample.android.storytel.network.*
 import com.sample.android.storytel.util.schedulars.BaseSchedulerProvider
 import com.sample.android.storytel.viewmodels.MainViewModel.RequestWrapper
-import io.reactivex.Single
 import javax.inject.Inject
 
 
@@ -20,7 +19,12 @@ class MainViewModel(
         api: StorytelService,
         schedulerProvider: BaseSchedulerProvider,
 ) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
-        getPairRequestSingle(api.getPhotos(), api.getPosts())) {
+    run {
+        val requestWrapper = RequestWrapper()
+        val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
+            .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
+        Pair(requestSingle, requestWrapper)
+    }) {
 
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
             wrapper?.networkPosts?.let { networkPosts ->
@@ -49,14 +53,4 @@ class MainViewModel(
             throw IllegalArgumentException("Unable to construct viewmodel")
         }
     }
-}
-
-private fun getPairRequestSingle(
-    networkPhotosSingle: Single<List<NetworkPhoto>>,
-    networkPostsSingle: Single<List<NetworkPost>>,
-): Pair<Single<Unit>, RequestWrapper> {
-    val requestWrapper = RequestWrapper()
-    val requestSingle = networkPhotosSingle.map { requestWrapper.networkPhotos = it }
-            .flatMap { networkPostsSingle.map { requestWrapper.networkPosts = it } }
-    return Pair(requestSingle, requestWrapper)
 }
