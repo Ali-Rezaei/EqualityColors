@@ -29,7 +29,7 @@ class MainViewModel(
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
             wrapper?.networkPosts?.let { networkPosts ->
                 wrapper.networkPhotos?.let { networkPhotos ->
-                    PostsAndImages(networkPosts, networkPhotos).asDomaineModel()
+                    PostsAndImages(networkPosts, networkPhotos).asDomainModel()
                 }
             }
 

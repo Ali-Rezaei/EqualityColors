@@ -24,7 +24,7 @@ class NetworkPhoto(
     val thumbnailUrl: String
 )
 
-fun PostsAndImages.asDomaineModel(): List<Post> {
+fun PostsAndImages.asDomainModel(): List<Post> {
     val posts = ArrayList<Post>()
     for (i in networkPosts.indices) {
         val networkPost = networkPosts[i]
@@ -47,4 +47,3 @@ fun PostsAndImages.asDomaineModel(): List<Post> {
     }
     return posts
 }
-
