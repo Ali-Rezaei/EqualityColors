@@ -105,8 +105,10 @@ dependencies {
 
     // Android Testing Support Library's runner and rules
     androidTestImplementation "androidx.test:runner:$version_runner"
-    androidTestImplementation  "androidx.test:rules:$version_rules"
+    androidTestImplementation "androidx.test:rules:$version_rules"
 
     // AndroidX Test - JVM testing
-    debugImplementation "androidx.fragment:fragment-testing:$version_fragment"
+    debugImplementation("androidx.fragment:fragment-testing:$version_fragment") {
+        exclude group: 'androidx.test', module: 'monitor'
+    }
 }
