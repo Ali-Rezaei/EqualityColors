@@ -15,6 +15,10 @@ class DetailViewModel(
 ) : BaseDetailViewModel<List<Comment>>
     (schedulerProvider, api.getComments(post.id)) {
 
+    init {
+        sendRequest()
+    }
+
     /**
      * Factory for constructing DetailViewModel with parameter
      */
