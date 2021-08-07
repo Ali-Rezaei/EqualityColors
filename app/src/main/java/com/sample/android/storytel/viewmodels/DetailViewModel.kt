@@ -13,10 +13,10 @@ class DetailViewModel(
     schedulerProvider: BaseSchedulerProvider,
     post: Post,
 ) : BaseDetailViewModel<List<Comment>>
-    (schedulerProvider) {
+    (schedulerProvider, api.getComments(post.id)) {
 
     init {
-        sendRequest(api.getComments(post.id))
+        sendRequest()
     }
 
     /**

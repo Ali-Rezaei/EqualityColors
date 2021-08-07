@@ -18,15 +18,16 @@ import javax.inject.Inject
 class MainViewModel(
     api: StorytelService,
     schedulerProvider: BaseSchedulerProvider,
-) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider) {
+) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
+    run {
+        val requestWrapper = RequestWrapper()
+        val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
+            .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
+        Pair(requestSingle, requestWrapper)
+    }) {
 
     init {
-        sendRequest(run {
-            val requestWrapper = RequestWrapper()
-            val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
-                .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
-            Pair(requestSingle, requestWrapper)
-        })
+        sendRequest()
     }
 
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
