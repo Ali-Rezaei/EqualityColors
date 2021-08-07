@@ -11,8 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 
 abstract class BaseViewModel<T, R, K>(
-    private val schedulerProvider: BaseSchedulerProvider,
-    private val requestSingle: Pair<Single<R>, K?>
+    private val schedulerProvider: BaseSchedulerProvider
 ) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
@@ -22,10 +21,6 @@ abstract class BaseViewModel<T, R, K>(
         get() = _liveData
 
     protected abstract fun getSuccessResult(it: R, wrapper: K?): T?
-
-    fun sendRequest() {
-        sendRequest(requestSingle)
-    }
 
     protected fun sendRequest(requestSingle: Pair<Single<R>, K?>) {
         _liveData.value = Resource.Loading()

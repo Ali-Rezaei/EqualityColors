@@ -16,38 +16,37 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-        api: StorytelService,
-        schedulerProvider: BaseSchedulerProvider,
-) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
-    run {
-        val requestWrapper = RequestWrapper()
-        val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
-            .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
-        Pair(requestSingle, requestWrapper)
-    }) {
+    api: StorytelService,
+    schedulerProvider: BaseSchedulerProvider,
+) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider) {
 
     init {
-        sendRequest()
+        sendRequest(run {
+            val requestWrapper = RequestWrapper()
+            val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
+                .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
+            Pair(requestSingle, requestWrapper)
+        })
     }
 
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
-            wrapper?.networkPosts?.let { networkPosts ->
-                wrapper.networkPhotos?.let { networkPhotos ->
-                    PostsAndImages(networkPosts, networkPhotos).asDomainModel()
-                }
+        wrapper?.networkPosts?.let { networkPosts ->
+            wrapper.networkPhotos?.let { networkPhotos ->
+                PostsAndImages(networkPosts, networkPhotos).asDomainModel()
             }
+        }
 
     class RequestWrapper(
-            var networkPhotos: List<NetworkPhoto>? = null,
-            var networkPosts: List<NetworkPost>? = null,
+        var networkPhotos: List<NetworkPhoto>? = null,
+        var networkPosts: List<NetworkPost>? = null,
     )
 
     /**
      * Factory for constructing MainViewModel with parameter
      */
     class Factory @Inject constructor(
-            private val api: StorytelService,
-            private val schedulerProvider: BaseSchedulerProvider,
+        private val api: StorytelService,
+        private val schedulerProvider: BaseSchedulerProvider,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
