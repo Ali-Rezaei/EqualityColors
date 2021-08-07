@@ -26,10 +26,6 @@ class MainViewModel(
         Pair(requestSingle, requestWrapper)
     }) {
 
-    init {
-        sendRequest()
-    }
-
     override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
         wrapper?.networkPosts?.let { networkPosts ->
             wrapper.networkPhotos?.let { networkPhotos ->
