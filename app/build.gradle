@@ -15,12 +15,12 @@ androidExtensions {
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.sample.android.storytel"
+        applicationId "com.sample.android.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "STORYTEL_BASE_URL", "\"https://jsonplaceholder.typicode.com/\""
+        buildConfigField "String", "BASE_URL", "\"https://jsonplaceholder.typicode.com/\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

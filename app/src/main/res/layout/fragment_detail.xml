@@ -8,11 +8,11 @@
 
         <variable
             name="post"
-            type="com.sample.android.storytel.domain.Post" />
+            type="com.sample.android.app.domain.Post" />
 
         <variable
             name="comments"
-            type="java.util.List&lt;com.sample.android.storytel.domain.Comment&gt;" />
+            type="java.util.List&lt;com.sample.android.app.domain.Comment&gt;" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
