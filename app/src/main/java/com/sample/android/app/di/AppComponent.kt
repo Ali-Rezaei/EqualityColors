@@ -1,7 +1,6 @@
 package com.sample.android.app.di
 
-import android.app.Application
-import com.sample.android.app.SampleApplication
+import com.sample.android.app.Application
 import com.sample.android.app.network.Network
 
 import javax.inject.Singleton
@@ -18,13 +17,13 @@ import dagger.android.support.AndroidSupportInjectionModule
         Network::class,
         AppModule::class]
 )
-interface AppComponent : AndroidInjector<SampleApplication> {
+interface AppComponent : AndroidInjector<Application> {
 
     @Component.Builder
     interface Builder {
 
         @BindsInstance
-        fun application(application: Application): Builder
+        fun application(application: android.app.Application): Builder
 
         fun build(): AppComponent
     }

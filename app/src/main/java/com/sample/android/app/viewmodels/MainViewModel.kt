@@ -1,11 +1,14 @@
 package com.sample.android.app.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.app.domain.Post
 import com.sample.android.app.network.*
+import com.sample.android.app.util.Resource
 import com.sample.android.app.util.schedulars.BaseSchedulerProvider
-import com.sample.android.app.viewmodels.MainViewModel.RequestWrapper
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -16,22 +19,37 @@ import javax.inject.Inject
  * results after the new Fragment or Activity is available.
  */
 class MainViewModel(
-    api: ApiService,
+    private val api: ApiService,
     schedulerProvider: BaseSchedulerProvider,
-) : BaseViewModel<List<Post>, Unit, RequestWrapper>(schedulerProvider,
-    run {
-        val requestWrapper = RequestWrapper()
-        val requestSingle = api.getPhotos().map { requestWrapper.networkPhotos = it }
-            .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
-        Pair(requestSingle, requestWrapper)
-    }) {
+) : BaseViewModel(schedulerProvider) {
 
-    override fun getSuccessResult(it: Unit, wrapper: RequestWrapper?): List<Post>? =
-        wrapper?.networkPosts?.let { networkPosts ->
-            wrapper.networkPhotos?.let { networkPhotos ->
-                PostsAndImages(networkPosts, networkPhotos).asDomainModel()
-            }
-        }
+    private val _liveData = MutableLiveData<Resource<List<Post>>>()
+    val liveData: LiveData<Resource<List<Post>>>
+        get() = _liveData
+
+    init {
+        sendRequest()
+    }
+
+    fun sendRequest() {
+        _liveData.value = Resource.Loading()
+        val requestWrapper = RequestWrapper()
+        composeSingle {
+            api.getPhotos().map { requestWrapper.networkPhotos = it }
+                .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
+        }.subscribe({
+            _liveData.postValue(Resource.Success(
+                requestWrapper.networkPosts?.let { networkPosts ->
+                    requestWrapper.networkPhotos?.let { networkPhotos ->
+                        PostsAndImages(networkPosts, networkPhotos).asDomainModel()
+                    }
+                }
+            ))
+        }) {
+            _liveData.postValue(Resource.Failure(it.localizedMessage))
+            Timber.e(it)
+        }.also { compositeDisposable.add(it) }
+    }
 
     class RequestWrapper(
         var networkPhotos: List<NetworkPhoto>? = null,

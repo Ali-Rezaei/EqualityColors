@@ -5,7 +5,7 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import timber.log.Timber
 
-class SampleApplication : DaggerApplication() {
+class Application : DaggerApplication() {
 
     /**
      * onCreate is called before the first screen is shown to the user.
