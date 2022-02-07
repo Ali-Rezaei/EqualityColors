@@ -1,7 +1,5 @@
 package com.sample.android.app.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.app.domain.Comment
@@ -16,22 +14,18 @@ class DetailViewModel(
     private val api: ApiService,
     private val post: Post,
     schedulerProvider: BaseSchedulerProvider
-) : BaseViewModel(schedulerProvider) {
-
-    private val _liveData = MutableLiveData<Resource<List<Comment>>>()
-    val liveData: LiveData<Resource<List<Comment>>>
-        get() = _liveData
+) : BaseViewModel<List<Comment>>(schedulerProvider) {
 
     init {
         sendRequest()
     }
 
     private fun sendRequest() {
-        _liveData.value = Resource.Loading()
+        mutableLiveData.value = Resource.Loading()
         composeSingle { api.getComments(post.id) }.subscribe({
-            _liveData.postValue(Resource.Success(it))
+            mutableLiveData.postValue(Resource.Success(it))
         }) {
-            _liveData.postValue(Resource.Failure(it.localizedMessage))
+            mutableLiveData.postValue(Resource.Failure(it.localizedMessage))
             Timber.e(it)
         }.also { compositeDisposable.add(it) }
     }

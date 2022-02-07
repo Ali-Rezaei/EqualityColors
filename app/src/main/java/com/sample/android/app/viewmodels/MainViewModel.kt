@@ -1,7 +1,5 @@
 package com.sample.android.app.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sample.android.app.domain.Post
@@ -21,24 +19,20 @@ import javax.inject.Inject
 class MainViewModel(
     private val api: ApiService,
     schedulerProvider: BaseSchedulerProvider,
-) : BaseViewModel(schedulerProvider) {
-
-    private val _liveData = MutableLiveData<Resource<List<Post>>>()
-    val liveData: LiveData<Resource<List<Post>>>
-        get() = _liveData
+) : BaseViewModel<List<Post>>(schedulerProvider) {
 
     init {
         sendRequest()
     }
 
     fun sendRequest() {
-        _liveData.value = Resource.Loading()
+        mutableLiveData.value = Resource.Loading()
         val requestWrapper = RequestWrapper()
         composeSingle {
             api.getPhotos().map { requestWrapper.networkPhotos = it }
                 .flatMap { api.getPosts().map { requestWrapper.networkPosts = it } }
         }.subscribe({
-            _liveData.postValue(Resource.Success(
+            mutableLiveData.postValue(Resource.Success(
                 requestWrapper.networkPosts?.let { networkPosts ->
                     requestWrapper.networkPhotos?.let { networkPhotos ->
                         PostsAndImages(networkPosts, networkPhotos).asDomainModel()
@@ -46,7 +40,7 @@ class MainViewModel(
                 }
             ))
         }) {
-            _liveData.postValue(Resource.Failure(it.localizedMessage))
+            mutableLiveData.postValue(Resource.Failure(it.localizedMessage))
             Timber.e(it)
         }.also { compositeDisposable.add(it) }
     }
