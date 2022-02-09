@@ -24,11 +24,6 @@ constructor() // Required empty public constructor
     @Inject
     lateinit var factory: MainViewModel.Factory
 
-    /**
-     * RecyclerView Adapter for converting a list of posts to cards.
-     */
-    private lateinit var viewModelAdapter: MainAdapter
-
     private var _binding: FragmentMainBinding? = null
 
     private val binding get() = _binding!!
@@ -38,49 +33,46 @@ constructor() // Required empty public constructor
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if (_binding == null) {
-            // execute this block if null
-            val viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
+        val viewModel = ViewModelProvider(this, factory).get(MainViewModel::class.java)
 
-            _binding = FragmentMainBinding.inflate(inflater, container, false).apply {
-                setVariable(BR.vm, viewModel)
-                // Set the lifecycleOwner so DataBinding can observe LiveData
-                lifecycleOwner = viewLifecycleOwner
-            }
+        _binding = FragmentMainBinding.inflate(inflater, container, false).apply {
+            setVariable(BR.vm, viewModel)
+            // Set the lifecycleOwner so DataBinding can observe LiveData
+            lifecycleOwner = viewLifecycleOwner
+        }
 
-            viewModel.liveData.observe(viewLifecycleOwner, {
-                if (it is Resource.Success)
-                    viewModelAdapter.submitList(it.data)
+        val viewModelAdapter =
+            MainAdapter(MainAdapter.OnClickListener { post, imageView ->
+                val extras = FragmentNavigatorExtras(
+                    imageView to post.id.toString()
+                )
+                val destination =
+                    MainFragmentDirections.actionMainFragmentToDetailFragment(post)
+                with(findNavController()) {
+                    currentDestination?.getAction(destination.actionId)
+                        ?.let { navigate(destination, extras) }
+                }
+
             })
 
-            viewModelAdapter =
-                MainAdapter(MainAdapter.OnClickListener { post, imageView ->
-                    val extras = FragmentNavigatorExtras(
-                        imageView to post.id.toString()
-                    )
-                    val destination =
-                        MainFragmentDirections.actionMainFragmentToDetailFragment(post)
-                    with(findNavController()) {
-                        currentDestination?.getAction(destination.actionId)
-                            ?.let { navigate(destination, extras) }
-                    }
+        viewModel.liveData.observe(viewLifecycleOwner, {
+            if (it is Resource.Success)
+                viewModelAdapter.submitList(it.data)
+        })
 
-                })
-
-            with(binding) {
-                recyclerView.apply {
-                    setHasFixedSize(true)
-                    adapter = viewModelAdapter
-                    postponeEnterTransition()
-                    viewTreeObserver.addOnPreDrawListener {
-                        startPostponedEnterTransition()
-                        true
-                    }
+        with(binding) {
+            recyclerView.apply {
+                setHasFixedSize(true)
+                adapter = viewModelAdapter
+                postponeEnterTransition()
+                viewTreeObserver.addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
                 }
+            }
 
-                (activity as AppCompatActivity).setupActionBar(toolbar) {
-                    setTitle(R.string.app_name)
-                }
+            (activity as AppCompatActivity).setupActionBar(toolbar) {
+                setTitle(R.string.app_name)
             }
         }
         return binding.root
