@@ -52,7 +52,7 @@ class DetailViewModelTest {
         val observableResponse = Single.just(listOf(comment))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
-        val viewModel = DetailViewModel(api, schedulerProvider, post)
+        val viewModel = DetailViewModel(api, post, schedulerProvider)
 
         viewModel.liveData.value.let {
             if (it is Resource.Success) {
@@ -68,7 +68,7 @@ class DetailViewModelTest {
         val observableResponse = Single.error<List<Comment>>(Exception(errorMessage))
         `when`(api.getComments(anyInt())).thenReturn(observableResponse)
 
-        val viewModel = DetailViewModel(api, schedulerProvider, post)
+        val viewModel = DetailViewModel(api, post, schedulerProvider)
 
         viewModel.liveData.value.let {
             if (it is Resource.Failure) {
